@@ -465,25 +465,26 @@ button:disabled {
 .standings-table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 1.05rem;
 }
 
 .standings-table th {
   text-align: left;
   text-transform: uppercase;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   letter-spacing: 0.06em;
   color: var(--text-muted);
-  padding: 8px 10px;
+  padding: 14px 20px;
   border-bottom: 1px solid var(--border);
 }
 
 .standings-table td {
-  padding: 12px 10px;
+  padding: 18px 20px;
   border-bottom: 1px solid var(--border-soft);
 }
 
 .standings-table .rank-col {
-  width: 32px;
+  width: 40px;
   color: var(--text-muted);
 }
 
@@ -494,7 +495,7 @@ button:disabled {
 
 .standings-table .num-col {
   text-align: right;
-  width: 70px;
+  width: 100px;
 }
 
 .back-link {
