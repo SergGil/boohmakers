@@ -30,3 +30,48 @@ export function calculatePoints(match: Match, prediction: Prediction): number {
 
   return 1 + resultPoints + diffPoints + homePoints + awayPoints + bonusPoints;
 }
+
+export interface StandingsEntry {
+  uid: string;
+  displayName: string;
+  /** Points earned per finished match in the tournament, in match order (0 if no prediction was made). */
+  matchPoints: number[];
+}
+
+export interface RankedStanding {
+  uid: string;
+  displayName: string;
+  totalPoints: number;
+  averagePoints: number;
+}
+
+/**
+ * Tie-break order for equal total points:
+ *  1. Count of matches scoring 6, then 4, then 3, then 2, then 1 (most first)
+ *  2. Average points per match in the tournament
+ */
+export function rankStandings(entries: StandingsEntry[]): RankedStanding[] {
+  const TIEBREAK_VALUES = [6, 4, 3, 2, 1];
+
+  const withStats = entries.map((e) => {
+    const totalPoints = e.matchPoints.reduce((sum, p) => sum + p, 0);
+    const averagePoints = e.matchPoints.length ? totalPoints / e.matchPoints.length : 0;
+    const tiebreakCounts = TIEBREAK_VALUES.map((v) => e.matchPoints.filter((p) => p === v).length);
+    return { uid: e.uid, displayName: e.displayName, totalPoints, averagePoints, tiebreakCounts };
+  });
+
+  withStats.sort((a, b) => {
+    if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
+    for (let i = 0; i < TIEBREAK_VALUES.length; i++) {
+      if (b.tiebreakCounts[i] !== a.tiebreakCounts[i]) return b.tiebreakCounts[i] - a.tiebreakCounts[i];
+    }
+    return b.averagePoints - a.averagePoints;
+  });
+
+  return withStats.map(({ uid, displayName, totalPoints, averagePoints }) => ({
+    uid,
+    displayName,
+    totalPoints,
+    averagePoints,
+  }));
+}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { subscribeToPredictions } from '../lib/firestore';
-import { calculatePoints } from '../lib/scoring';
+import { calculatePoints, rankStandings, type RankedStanding } from '../lib/scoring';
 import type { Match } from '../types';
 
 interface Props {
@@ -8,14 +8,8 @@ interface Props {
   matches: Match[];
 }
 
-interface Row {
-  uid: string;
-  displayName: string;
-  points: number;
-}
-
 export default function Standings({ competitionId, matches }: Props) {
-  const [rows, setRows] = useState<Row[]>([]);
+  const [rows, setRows] = useState<RankedStanding[]>([]);
 
   useEffect(() => {
     const finished = matches.filter((m) => m.status === 'finished');
@@ -28,17 +22,20 @@ export default function Standings({ competitionId, matches }: Props) {
     const pointsByMatch = new Map<string, Map<string, { displayName: string; points: number }>>();
 
     const recompute = () => {
-      const totals = new Map<string, { displayName: string; points: number }>();
+      const displayNames = new Map<string, string>();
       for (const userPoints of pointsByMatch.values()) {
-        for (const [uid, { displayName, points }] of userPoints.entries()) {
-          const current = totals.get(uid) ?? { displayName, points: 0 };
-          totals.set(uid, { displayName, points: current.points + points });
+        for (const [uid, { displayName }] of userPoints.entries()) {
+          displayNames.set(uid, displayName);
         }
       }
-      const nextRows = [...totals.entries()]
-        .map(([uid, { displayName, points }]) => ({ uid, displayName, points }))
-        .sort((a, b) => b.points - a.points);
-      setRows(nextRows);
+
+      const entries = [...displayNames.entries()].map(([uid, displayName]) => ({
+        uid,
+        displayName,
+        matchPoints: finished.map((match) => pointsByMatch.get(match.id)?.get(uid)?.points ?? 0),
+      }));
+
+      setRows(rankStandings(entries));
     };
 
     const unsubscribers = finished.map((match) =>
@@ -64,7 +61,8 @@ export default function Standings({ competitionId, matches }: Props) {
         <ol>
           {rows.map((r) => (
             <li key={r.uid}>
-              {r.displayName} — {r.points} очок
+              {r.displayName} — {r.totalPoints} очок
+              <span className="muted"> (сер. {r.averagePoints.toFixed(2)}/матч)</span>
             </li>
           ))}
         </ol>
