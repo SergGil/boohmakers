@@ -115,6 +115,17 @@ export async function getOwnPrediction(
   return snap.exists() ? (snap.data() as Prediction) : null;
 }
 
+export function subscribeToOwnPrediction(
+  competitionId: string,
+  matchId: string,
+  uid: string,
+  cb: (prediction: Prediction | null) => void,
+) {
+  return onSnapshot(doc(db, 'competitions', competitionId, 'matches', matchId, 'predictions', uid), (snap) => {
+    cb(snap.exists() ? (snap.data() as Prediction) : null);
+  });
+}
+
 export function subscribeToUserProfile(uid: string, cb: (profile: UserProfile | null) => void) {
   return onSnapshot(doc(db, 'users', uid), (snap) => {
     cb(snap.exists() ? (snap.data() as UserProfile) : null);

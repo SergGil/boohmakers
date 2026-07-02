@@ -4,9 +4,9 @@ import { useAuth } from '../contexts/AuthContext';
 import { addMatch, subscribeToCompetition, subscribeToMatches } from '../lib/firestore';
 import { ADMIN_EMAIL } from '../lib/admin';
 import type { Competition, Match } from '../types';
-import MatchCard from '../components/MatchCard';
 import Standings from '../components/Standings';
 import CompletedMatchesTable from '../components/CompletedMatchesTable';
+import MatchesTable from '../components/MatchesTable';
 import CompetitionSidebar, { type CompetitionSection } from '../components/CompetitionSidebar';
 
 export default function CompetitionPage() {
@@ -86,19 +86,13 @@ export default function CompetitionPage() {
           ) : (
             <>
               <h3>{sectionLabels[section]}</h3>
-              <div className="match-list">
-                {sectionMatches[section].map((m) => (
-                  <MatchCard
-                    key={m.id}
-                    competitionId={id}
-                    match={m}
-                    isAdmin={isAdmin}
-                    uid={user.uid}
-                    displayName={displayName}
-                  />
-                ))}
-                {sectionMatches[section].length === 0 && <p className="muted">Матчів немає</p>}
-              </div>
+              <MatchesTable
+                competitionId={id}
+                matches={sectionMatches[section]}
+                isAdmin={isAdmin}
+                uid={user.uid}
+                displayName={displayName}
+              />
 
               {isAdmin && section === 'next' && (
                 <div className="panel">
