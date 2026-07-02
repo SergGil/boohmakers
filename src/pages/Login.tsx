@@ -18,8 +18,7 @@ export default function Login() {
   return (
     <div className="login-page">
       <div className="login-card">
-        <img src="/boohmakers-logo.png" alt="boohmakers" className="login-logo" />
-        <h1 className="login-title">Точний рахунок</h1>
+        <img src={`${import.meta.env.BASE_URL}boohmakers-logo.png`} alt="boohmakers" className="login-logo" />
         <div className="login-divider" />
 
         <button className="google-btn" disabled={signingIn} onClick={handleSignIn}>

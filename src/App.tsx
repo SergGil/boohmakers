@@ -11,18 +11,17 @@ function AppRoutes() {
 
   if (loading) return <div className="centered-page">Завантаження...</div>;
 
+  if (!user) return <Login />;
+
   return (
-    <Routes>
-      {!user ? (
-        <Route path="*" element={<Login />} />
-      ) : (
-        <>
-          <Route path="/" element={<Home />} />
-          <Route path="/competitions/:id" element={<CompetitionPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </>
-      )}
-    </Routes>
+    <>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/competitions/:id" element={<CompetitionPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
   );
 }
 
@@ -30,7 +29,6 @@ export default function App() {
   return (
     <AuthProvider>
       <HashRouter>
-        <Header />
         <AppRoutes />
       </HashRouter>
     </AuthProvider>
