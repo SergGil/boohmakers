@@ -13,7 +13,7 @@ export default function ProfilePage() {
   const [nickname, setNickname] = useState('');
   const [favoriteClub, setFavoriteClub] = useState('');
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -28,7 +28,6 @@ export default function ProfilePage() {
 
   const handleSave = async () => {
     setSaving(true);
-    setSaved(false);
     try {
       await saveUserProfile({
         uid: user.uid,
@@ -37,7 +36,8 @@ export default function ProfilePage() {
         nickname: nickname.trim(),
         favoriteClub,
       });
-      setSaved(true);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
     } finally {
       setSaving(false);
     }
@@ -87,8 +87,9 @@ export default function ProfilePage() {
         <button disabled={saving} onClick={handleSave}>
           {saving ? 'Зберігаємо...' : 'Зберегти'}
         </button>
-        {saved && <span className="muted">Збережено</span>}
       </div>
+
+      {showToast && <div className="toast toast-success">Дані профілю оновлені</div>}
     </div>
   );
 }
