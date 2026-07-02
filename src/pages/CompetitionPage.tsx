@@ -58,10 +58,7 @@ export default function CompetitionPage() {
   const sectionLabels = { next: 'Наступні матчі', current: 'Поточні матчі', completed: 'Завершені матчі' };
 
   return (
-    <div className="page competition-page">
-      <h2>{competition.name}</h2>
-      <p className="invite-code">Код запрошення: {competition.inviteCode}</p>
-
+    <div className="competition-page">
       <div className="competition-layout">
         <CompetitionSidebar
           active={section}
@@ -75,6 +72,9 @@ export default function CompetitionPage() {
         />
 
         <div className="competition-content">
+          <h2>{competition.name}</h2>
+          <p className="invite-code">Код запрошення: {competition.inviteCode}</p>
+
           {section === 'table' ? (
             <Standings competitionId={id} matches={matches} />
           ) : (
