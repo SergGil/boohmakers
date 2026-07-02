@@ -346,11 +346,6 @@ button:disabled {
   color: var(--accent);
 }
 
-.invite-code {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-}
-
 .match-card {
   background: var(--surface);
   border: 1px solid var(--border);

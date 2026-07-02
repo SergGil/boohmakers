@@ -1,43 +1,24 @@
-import {
-  addDoc,
-  arrayUnion,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  onSnapshot,
-  query,
-  setDoc,
-  updateDoc,
-  where,
-} from 'firebase/firestore';
+import { addDoc, arrayUnion, collection, doc, getDoc, onSnapshot, query, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { Competition, Match, Prediction, UserProfile } from '../types';
-
-const randomInviteCode = () => Math.random().toString(36).slice(2, 8).toUpperCase();
 
 export async function createCompetition(name: string, ownerId: string): Promise<string> {
   const ref = await addDoc(collection(db, 'competitions'), {
     name,
     ownerId,
-    inviteCode: randomInviteCode(),
     memberIds: [ownerId],
     createdAt: Date.now(),
   });
   return ref.id;
 }
 
-export async function joinCompetitionByCode(inviteCode: string, uid: string): Promise<string> {
-  const q = query(collection(db, 'competitions'), where('inviteCode', '==', inviteCode.toUpperCase()));
-  const snap = await getDocs(q);
-  if (snap.empty) throw new Error('Змагання з таким кодом не знайдено');
-  const competitionDoc = snap.docs[0];
-  await updateDoc(competitionDoc.ref, { memberIds: arrayUnion(uid) });
-  return competitionDoc.id;
+/** Adds uid to the competition's memberIds if not already present — placing a bet implies joining. */
+export async function ensureMembership(competitionId: string, uid: string): Promise<void> {
+  await updateDoc(doc(db, 'competitions', competitionId), { memberIds: arrayUnion(uid) });
 }
 
-export function subscribeToUserCompetitions(uid: string, cb: (competitions: Competition[]) => void) {
-  const q = query(collection(db, 'competitions'), where('memberIds', 'array-contains', uid));
+export function subscribeToAllCompetitions(cb: (competitions: Competition[]) => void) {
+  const q = query(collection(db, 'competitions'));
   return onSnapshot(q, (snap) => {
     cb(snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Competition, 'id'>) })));
   });

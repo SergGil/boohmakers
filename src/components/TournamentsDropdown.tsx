@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { subscribeToUserCompetitions } from '../lib/firestore';
+import { subscribeToAllCompetitions } from '../lib/firestore';
 import type { Competition } from '../types';
 
 interface Props {
@@ -9,16 +8,12 @@ interface Props {
 }
 
 export default function TournamentsDropdown({ currentCompetitionId }: Props) {
-  const { user } = useAuth();
   const navigate = useNavigate();
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!user) return;
-    return subscribeToUserCompetitions(user.uid, setCompetitions);
-  }, [user]);
+  useEffect(() => subscribeToAllCompetitions(setCompetitions), []);
 
   useEffect(() => {
     const onClickOutside = (e: MouseEvent) => {

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { addMatch, subscribeToCompetition, subscribeToMatches } from '../lib/firestore';
+import { addMatch, ensureMembership, subscribeToCompetition, subscribeToMatches } from '../lib/firestore';
 import { ADMIN_EMAIL } from '../lib/admin';
 import type { Competition, Match } from '../types';
 import Standings from '../components/Standings';
@@ -21,14 +21,21 @@ export default function CompetitionPage() {
   const [kickoff, setKickoff] = useState('');
 
   useEffect(() => {
-    if (!id) return;
+    if (!id || !user) return;
     const unsub1 = subscribeToCompetition(id, setCompetition);
-    const unsub2 = subscribeToMatches(id, setMatches);
+    let unsub2: (() => void) | undefined;
+    let cancelled = false;
+
+    ensureMembership(id, user.uid).then(() => {
+      if (!cancelled) unsub2 = subscribeToMatches(id, setMatches);
+    });
+
     return () => {
+      cancelled = true;
       unsub1();
-      unsub2();
+      unsub2?.();
     };
-  }, [id]);
+  }, [id, user]);
 
   const { nextMatches, currentMatches, completedMatches } = useMemo(() => {
     const now = Date.now();
@@ -74,7 +81,6 @@ export default function CompetitionPage() {
 
         <div className="competition-content">
           <h2>{competition.name}</h2>
-          <p className="invite-code">Код запрошення: {competition.inviteCode}</p>
 
           {section === 'table' ? (
             <Standings competitionId={id} matches={matches} />
