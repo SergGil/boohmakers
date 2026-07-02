@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Home from './pages/Home';
 import CompetitionPage from './pages/CompetitionPage';
 import ProfilePage from './pages/ProfilePage';
+import UserStatsPage from './pages/UserStatsPage';
 import './App.css';
 
 function AppRoutes() {
@@ -21,6 +22,7 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/users/:uid" element={<UserStatsPage />} />
         <Route path="/competitions/:id" element={<CompetitionPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { subscribeToPredictions } from '../lib/firestore';
 import { calculatePoints, rankStandings, type RankedStanding } from '../lib/scoring';
 import { useDisplayNames } from '../lib/useDisplayNames';
@@ -76,7 +77,9 @@ export default function Standings({ competitionId, matches }: Props) {
             {rows.map((r, i) => (
               <tr key={r.uid}>
                 <td className="rank-col">{i + 1}</td>
-                <td className="name-col">{nicknames.get(r.uid) ?? r.displayName}</td>
+                <td className="name-col">
+                  <Link to={`/users/${r.uid}`}>{nicknames.get(r.uid) ?? r.displayName}</Link>
+                </td>
                 <td className="num-col">{r.sixPointCount}</td>
                 <td className="num-col">{r.totalPoints}</td>
               </tr>

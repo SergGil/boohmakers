@@ -1,5 +1,19 @@
-import { addDoc, arrayUnion, collection, doc, getDoc, onSnapshot, query, setDoc, updateDoc } from 'firebase/firestore';
+import {
+  addDoc,
+  arrayUnion,
+  collection,
+  collectionGroup,
+  doc,
+  getDoc,
+  getDocs,
+  onSnapshot,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
 import { db } from '../firebase';
+import { calculatePoints } from './scoring';
 import type { Competition, Match, Prediction, UserProfile } from '../types';
 
 export async function createCompetition(name: string, ownerId: string): Promise<string> {
@@ -115,4 +129,34 @@ export function subscribeToUserProfile(uid: string, cb: (profile: UserProfile | 
 
 export async function saveUserProfile(profile: UserProfile): Promise<void> {
   await setDoc(doc(db, 'users', profile.uid), profile);
+}
+
+export interface UserStats {
+  totalPoints: number;
+  totalBets: number;
+  averagePoints: number;
+}
+
+/** Aggregates a player's points/bets across every competition they've predicted in. */
+export async function getUserStats(uid: string): Promise<UserStats> {
+  const q = query(collectionGroup(db, 'predictions'), where('uid', '==', uid));
+  const snap = await getDocs(q);
+
+  let totalPoints = 0;
+  let totalBets = 0;
+
+  await Promise.all(
+    snap.docs.map(async (predictionDoc) => {
+      const matchRef = predictionDoc.ref.parent.parent;
+      if (!matchRef) return;
+      const matchSnap = await getDoc(matchRef);
+      if (!matchSnap.exists()) return;
+      const match = { id: matchSnap.id, ...(matchSnap.data() as Omit<Match, 'id'>) };
+      if (match.status !== 'finished') return;
+      totalBets += 1;
+      totalPoints += calculatePoints(match, predictionDoc.data() as Prediction);
+    }),
+  );
+
+  return { totalPoints, totalBets, averagePoints: totalBets ? totalPoints / totalBets : 0 };
 }
