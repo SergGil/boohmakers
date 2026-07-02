@@ -331,6 +331,95 @@ button:disabled {
   width: 100%;
 }
 
-.standings ol {
-  padding-left: 20px;
+.tournaments-dropdown {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.tournaments-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tournaments-toggle .caret {
+  font-size: 0.75rem;
+}
+
+.tournaments-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 10;
+  background: #ffffff;
+  border: 1px solid #e2e5ec;
+  border-radius: 8px;
+  box-shadow: 0 12px 30px rgba(20, 20, 40, 0.15);
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  min-width: 220px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.tournaments-item {
+  width: 100%;
+  text-align: left;
+  background: none;
+  color: #1a1f2b;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.tournaments-item:hover {
+  background: #eef1f8;
+}
+
+.tournaments-item.active {
+  color: #3d5af1;
+  font-weight: 600;
+}
+
+.tournaments-empty {
+  padding: 8px 10px;
+  color: #8a93a6;
+  font-size: 0.9rem;
+}
+
+.standings-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.standings-table th {
+  text-align: left;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: #8a93a6;
+  padding: 8px 10px;
+  border-bottom: 1px solid #e2e5ec;
+}
+
+.standings-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #eef1f8;
+}
+
+.standings-table .rank-col {
+  width: 32px;
+  color: #8a93a6;
+}
+
+.standings-table .name-col {
+  color: #3d5af1;
+  font-weight: 500;
+}
+
+.standings-table .num-col {
+  text-align: right;
+  width: 70px;
 }

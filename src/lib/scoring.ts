@@ -43,6 +43,8 @@ export interface RankedStanding {
   displayName: string;
   totalPoints: number;
   averagePoints: number;
+  /** Number of matches where 6 points (the max) were scored. */
+  sixPointCount: number;
 }
 
 /**
@@ -68,10 +70,11 @@ export function rankStandings(entries: StandingsEntry[]): RankedStanding[] {
     return b.averagePoints - a.averagePoints;
   });
 
-  return withStats.map(({ uid, displayName, totalPoints, averagePoints }) => ({
+  return withStats.map(({ uid, displayName, totalPoints, averagePoints, tiebreakCounts }) => ({
     uid,
     displayName,
     totalPoints,
     averagePoints,
+    sixPointCount: tiebreakCounts[0],
   }));
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { subscribeToPredictions } from '../lib/firestore';
 import { calculatePoints, rankStandings, type RankedStanding } from '../lib/scoring';
 import type { Match } from '../types';
+import TournamentsDropdown from './TournamentsDropdown';
 
 interface Props {
   competitionId: string;
@@ -54,18 +55,31 @@ export default function Standings({ competitionId, matches }: Props) {
 
   return (
     <div className="standings">
-      <h3>Таблиця</h3>
+      <TournamentsDropdown currentCompetitionId={competitionId} />
+
       {rows.length === 0 ? (
         <p className="muted">Ще немає завершених матчів</p>
       ) : (
-        <ol>
-          {rows.map((r) => (
-            <li key={r.uid}>
-              {r.displayName} — {r.totalPoints} очок
-              <span className="muted"> (сер. {r.averagePoints.toFixed(2)}/матч)</span>
-            </li>
-          ))}
-        </ol>
+        <table className="standings-table">
+          <thead>
+            <tr>
+              <th className="rank-col"></th>
+              <th>Name</th>
+              <th className="num-col">6</th>
+              <th className="num-col">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r, i) => (
+              <tr key={r.uid}>
+                <td className="rank-col">{i + 1}</td>
+                <td className="name-col">{r.displayName}</td>
+                <td className="num-col">{r.sixPointCount}</td>
+                <td className="num-col">{r.totalPoints}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );
