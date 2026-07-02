@@ -7,7 +7,7 @@ export default function Header() {
   return (
     <header className="app-header">
       <Link to="/" className="app-title">
-        Точний рахунок
+        БуХмекери
       </Link>
       {user && (
         <div className="user-box">
