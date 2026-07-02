@@ -6,6 +6,7 @@ import { ADMIN_EMAIL } from '../lib/admin';
 import type { Competition, Match } from '../types';
 import MatchCard from '../components/MatchCard';
 import Standings from '../components/Standings';
+import CompletedMatchesTable from '../components/CompletedMatchesTable';
 import CompetitionSidebar, { type CompetitionSection } from '../components/CompetitionSidebar';
 
 export default function CompetitionPage() {
@@ -77,6 +78,11 @@ export default function CompetitionPage() {
 
           {section === 'table' ? (
             <Standings competitionId={id} matches={matches} />
+          ) : section === 'completed' ? (
+            <>
+              <h3>{sectionLabels.completed}</h3>
+              <CompletedMatchesTable competitionId={id} matches={completedMatches} />
+            </>
           ) : (
             <>
               <h3>{sectionLabels[section]}</h3>
