@@ -1,17 +1,4 @@
-import {
-  addDoc,
-  arrayUnion,
-  collection,
-  collectionGroup,
-  doc,
-  getDoc,
-  getDocs,
-  onSnapshot,
-  query,
-  setDoc,
-  updateDoc,
-  where,
-} from 'firebase/firestore';
+import { addDoc, arrayUnion, collection, doc, getDoc, getDocs, onSnapshot, query, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { calculatePoints } from './scoring';
 import type { Competition, Match, Prediction, UserProfile } from '../types';
@@ -137,24 +124,34 @@ export interface UserStats {
   averagePoints: number;
 }
 
-/** Aggregates a player's points/bets across every competition they've predicted in. */
+/**
+ * Aggregates a player's points/bets across every competition they've predicted in.
+ * Walks competitions → matches → the player's own prediction doc directly, avoiding
+ * collectionGroup queries (which need an explicit collection-group index to work).
+ */
 export async function getUserStats(uid: string): Promise<UserStats> {
-  const q = query(collectionGroup(db, 'predictions'), where('uid', '==', uid));
-  const snap = await getDocs(q);
+  const competitionsSnap = await getDocs(collection(db, 'competitions'));
 
   let totalPoints = 0;
   let totalBets = 0;
 
   await Promise.all(
-    snap.docs.map(async (predictionDoc) => {
-      const matchRef = predictionDoc.ref.parent.parent;
-      if (!matchRef) return;
-      const matchSnap = await getDoc(matchRef);
-      if (!matchSnap.exists()) return;
-      const match = { id: matchSnap.id, ...(matchSnap.data() as Omit<Match, 'id'>) };
-      if (match.status !== 'finished') return;
-      totalBets += 1;
-      totalPoints += calculatePoints(match, predictionDoc.data() as Prediction);
+    competitionsSnap.docs.map(async (competitionDoc) => {
+      const matchesSnap = await getDocs(collection(db, 'competitions', competitionDoc.id, 'matches'));
+      const finishedMatches = matchesSnap.docs
+        .map((d) => ({ id: d.id, ...(d.data() as Omit<Match, 'id'>) }))
+        .filter((m) => m.status === 'finished');
+
+      await Promise.all(
+        finishedMatches.map(async (match) => {
+          const predictionSnap = await getDoc(
+            doc(db, 'competitions', competitionDoc.id, 'matches', match.id, 'predictions', uid),
+          );
+          if (!predictionSnap.exists()) return;
+          totalBets += 1;
+          totalPoints += calculatePoints(match, predictionSnap.data() as Prediction);
+        }),
+      );
     }),
   );
 
