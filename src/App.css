@@ -284,7 +284,6 @@ body {
   min-width: 0;
   background: var(--surface);
   padding: 24px 28px;
-  max-width: 760px;
 }
 
 .panel {
