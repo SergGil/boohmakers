@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { addMatch, subscribeToCompetition, subscribeToMatches } from '../lib/firestore';
+import { ADMIN_EMAIL } from '../lib/admin';
 import type { Competition, Match } from '../types';
 import MatchCard from '../components/MatchCard';
 import Standings from '../components/Standings';
@@ -39,7 +40,7 @@ export default function CompetitionPage() {
 
   if (!id || !user || !competition) return <div className="page">Завантаження...</div>;
 
-  const isAdmin = competition.ownerId === user.uid;
+  const isAdmin = user.email === ADMIN_EMAIL;
 
   const handleAddMatch = async () => {
     if (!homeTeam.trim() || !awayTeam.trim() || !kickoff) return;

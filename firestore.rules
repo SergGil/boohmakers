@@ -8,9 +8,8 @@ service cloud.firestore {
         request.auth.uid in get(/databases/$(database)/documents/competitions/$(compId)).data.memberIds;
     }
 
-    function isOwner(compId) {
-      return request.auth != null &&
-        request.auth.uid == get(/databases/$(database)/documents/competitions/$(compId)).data.ownerId;
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == 'sdalin777@gmail.com';
     }
 
     match /competitions/{compId} {
@@ -21,7 +20,7 @@ service cloud.firestore {
 
       match /matches/{matchId} {
         allow read: if isMember(compId);
-        allow create, update: if isOwner(compId);
+        allow create, update: if isAdmin();
 
         match /predictions/{uid} {
           allow read: if isMember(compId);
