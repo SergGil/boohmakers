@@ -28,7 +28,19 @@ body {
 .user-box {
   display: flex;
   align-items: center;
+  gap: 12px;
+}
+
+.profile-link {
+  display: flex;
+  align-items: center;
   gap: 8px;
+  color: #1a1f2b;
+  text-decoration: none;
+}
+
+.profile-link:hover {
+  color: #3d5af1;
 }
 
 .avatar {
@@ -215,7 +227,8 @@ body {
   align-items: center;
 }
 
-input {
+input,
+select {
   background: #ffffff;
   border: 1px solid #d7dbe6;
   color: #1a1f2b;
@@ -422,4 +435,50 @@ button:disabled {
 .standings-table .num-col {
   text-align: right;
   width: 70px;
+}
+
+.back-link {
+  background: none;
+  color: #4a5268;
+  border: none;
+  padding: 0;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.back-link:hover {
+  color: #3d5af1;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.profile-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+}
+
+.profile-form {
+  flex-direction: column;
+  align-items: stretch;
+  max-width: 420px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: #4a5268;
+}
+
+.form-field input,
+.form-field select {
+  font-size: 1rem;
 }

@@ -12,7 +12,7 @@ import {
   where,
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import type { Competition, Match, Prediction } from '../types';
+import type { Competition, Match, Prediction, UserProfile } from '../types';
 
 const randomInviteCode = () => Math.random().toString(36).slice(2, 8).toUpperCase();
 
@@ -113,4 +113,14 @@ export async function getOwnPrediction(
 ): Promise<Prediction | null> {
   const snap = await getDoc(doc(db, 'competitions', competitionId, 'matches', matchId, 'predictions', uid));
   return snap.exists() ? (snap.data() as Prediction) : null;
+}
+
+export function subscribeToUserProfile(uid: string, cb: (profile: UserProfile | null) => void) {
+  return onSnapshot(doc(db, 'users', uid), (snap) => {
+    cb(snap.exists() ? (snap.data() as UserProfile) : null);
+  });
+}
+
+export async function saveUserProfile(profile: UserProfile): Promise<void> {
+  await setDoc(doc(db, 'users', profile.uid), profile);
 }

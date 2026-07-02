@@ -1,7 +1,9 @@
-export interface AppUser {
+export interface UserProfile {
   uid: string;
-  displayName: string;
-  photoURL: string | null;
+  firstName: string;
+  lastName: string;
+  nickname: string;
+  favoriteClub: string;
 }
 
 export interface Competition {

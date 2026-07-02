@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Login from './pages/Login';
 import Home from './pages/Home';
 import CompetitionPage from './pages/CompetitionPage';
+import ProfilePage from './pages/ProfilePage';
 import './App.css';
 
 function AppRoutes() {
@@ -18,6 +19,7 @@ function AppRoutes() {
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/profile" element={<ProfilePage />} />
         <Route path="/competitions/:id" element={<CompetitionPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

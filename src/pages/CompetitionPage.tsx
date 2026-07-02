@@ -10,7 +10,7 @@ import CompetitionSidebar, { type CompetitionSection } from '../components/Compe
 
 export default function CompetitionPage() {
   const { id } = useParams<{ id: string }>();
-  const { user } = useAuth();
+  const { user, displayName } = useAuth();
   const [competition, setCompetition] = useState<Competition | null>(null);
   const [matches, setMatches] = useState<Match[]>([]);
   const [section, setSection] = useState<CompetitionSection>('next');
@@ -88,7 +88,7 @@ export default function CompetitionPage() {
                     match={m}
                     isAdmin={isAdmin}
                     uid={user.uid}
-                    displayName={user.displayName ?? 'Гравець'}
+                    displayName={displayName}
                   />
                 ))}
                 {sectionMatches[section].length === 0 && <p className="muted">Матчів немає</p>}

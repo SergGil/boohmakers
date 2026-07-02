@@ -9,10 +9,14 @@ import {
   type User,
 } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase';
+import { subscribeToUserProfile } from '../lib/firestore';
+import type { UserProfile } from '../types';
 
 interface AuthContextValue {
   user: User | null;
+  profile: UserProfile | null;
   loading: boolean;
+  displayName: string;
   signIn: (rememberMe: boolean) => Promise<void>;
   logOut: () => Promise<void>;
 }
@@ -21,6 +25,7 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,6 +34,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     });
   }, []);
+
+  useEffect(() => {
+    if (!user) {
+      setProfile(null);
+      return;
+    }
+    return subscribeToUserProfile(user.uid, setProfile);
+  }, [user]);
 
   const signIn = async (rememberMe: boolean) => {
     await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
@@ -39,8 +52,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signOut(auth);
   };
 
+  const displayName = profile?.nickname.trim() || user?.displayName || 'Гравець';
+
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, logOut }}>
+    <AuthContext.Provider value={{ user, profile, loading, displayName, signIn, logOut }}>
       {children}
     </AuthContext.Provider>
   );
