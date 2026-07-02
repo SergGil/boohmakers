@@ -342,7 +342,8 @@ button:disabled {
   border: 1px solid var(--border);
 }
 
-.competition-list a {
+.competition-list a,
+.competition-list a:visited {
   color: var(--accent);
 }
 
@@ -488,7 +489,8 @@ button:disabled {
   color: var(--text-muted);
 }
 
-.standings-table .name-col {
+.standings-table .name-col a,
+.standings-table .name-col a:visited {
   color: var(--accent);
   font-weight: 500;
 }
