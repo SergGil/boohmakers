@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { subscribeToPredictions } from '../lib/firestore';
 import { calculatePoints, rankStandings, type RankedStanding } from '../lib/scoring';
+import { useDisplayNames } from '../lib/useDisplayNames';
 import type { Match } from '../types';
 import TournamentsDropdown from './TournamentsDropdown';
 
@@ -53,6 +54,8 @@ export default function Standings({ competitionId, matches }: Props) {
     return () => unsubscribers.forEach((u) => u());
   }, [competitionId, matches]);
 
+  const nicknames = useDisplayNames(rows.map((r) => r.uid));
+
   return (
     <div className="standings">
       <TournamentsDropdown currentCompetitionId={competitionId} />
@@ -73,7 +76,7 @@ export default function Standings({ competitionId, matches }: Props) {
             {rows.map((r, i) => (
               <tr key={r.uid}>
                 <td className="rank-col">{i + 1}</td>
-                <td className="name-col">{r.displayName}</td>
+                <td className="name-col">{nicknames.get(r.uid) ?? r.displayName}</td>
                 <td className="num-col">{r.sixPointCount}</td>
                 <td className="num-col">{r.totalPoints}</td>
               </tr>
