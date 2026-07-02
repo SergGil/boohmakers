@@ -25,19 +25,22 @@ export default function UserStatsPage() {
   const displayName = profile?.nickname.trim() || 'Гравець';
 
   return (
-    <div className="page">
-      <button className="back-link" onClick={() => navigate(-1)}>
-        ← Назад
-      </button>
+    <div className="stats-page">
+      <div className="stats-card">
+        <div className="stats-topbar">
+          <button className="back-link" onClick={() => navigate(-1)}>
+            ← Назад
+          </button>
+          <span className="stats-nickname">{displayName}</span>
+        </div>
 
-      <h2>{displayName}</h2>
+        <h2 className="stats-heading">User Stats</h2>
+        <div className="stats-divider" />
 
-      <h3>User Stats</h3>
-      <div className="panel profile-form">
         {!stats ? (
-          <p className="muted">Завантаження...</p>
+          <p className="muted stats-loading">Завантаження...</p>
         ) : (
-          <table className="standings-table">
+          <table className="standings-table stats-table">
             <tbody>
               <tr>
                 <td>Points</td>
@@ -54,11 +57,10 @@ export default function UserStatsPage() {
             </tbody>
           </table>
         )}
-      </div>
 
-      <h3>Achievements</h3>
-      <div className="panel">
-        <p className="muted">Ачівок поки немає</p>
+        <h2 className="stats-heading">Achievements</h2>
+        <div className="stats-divider" />
+        <p className="muted stats-loading">Ачівок поки немає</p>
       </div>
     </div>
   );
