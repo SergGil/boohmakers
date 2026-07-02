@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import ThemeToggle from '../components/ThemeToggle';
 
 export default function Login() {
   const { signIn } = useAuth();
@@ -17,6 +18,9 @@ export default function Login() {
 
   return (
     <div className="login-page">
+      <div className="login-theme-toggle">
+        <ThemeToggle />
+      </div>
       <div className="login-card">
         <img src={`${import.meta.env.BASE_URL}boohmakers-logo.png`} alt="БуХмекери" className="login-logo" />
         <h1 className="login-title">БуХмекери</h1>

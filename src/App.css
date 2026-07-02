@@ -18,6 +18,7 @@
   --success: #1a9b5c;
   --error: #d64545;
   --shadow-color: rgba(20, 20, 40, 0.15);
+  --login-gradient: linear-gradient(135deg, #d9b8f0 0%, #b7c8ef 50%, #8fb2ff 100%);
 }
 
 [data-theme='dark'] {
@@ -36,6 +37,7 @@
   --success: #3ecb85;
   --error: #ff6b6b;
   --shadow-color: rgba(0, 0, 0, 0.5);
+  --login-gradient: linear-gradient(135deg, #201830 0%, #16213a 50%, #0f2a4a 100%);
 }
 
 body {
@@ -67,23 +69,31 @@ body {
   gap: 12px;
 }
 
-.theme-toggle {
-  background: var(--surface-alt);
-  border: 1px solid var(--border);
-  color: var(--text);
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  display: flex;
+.theme-switch {
+  width: 52px;
+  height: 28px;
+  border-radius: 999px;
+  border: none;
+  padding: 3px;
+  background: var(--input-border);
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 0;
-  font-size: 1rem;
+  justify-content: flex-start;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
-.theme-toggle:hover {
-  background: var(--hover-bg);
+.theme-switch.checked {
+  background: var(--accent);
+  justify-content: flex-end;
+}
+
+.theme-switch-knob {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .profile-link {
@@ -116,17 +126,24 @@ body {
 }
 
 .login-page {
+  position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: linear-gradient(135deg, #d9b8f0 0%, #b7c8ef 50%, #8fb2ff 100%);
+  background: var(--login-gradient);
+}
+
+.login-theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
 }
 
 .login-card {
-  background: #ffffff;
-  color: #1a1f2b;
+  background: var(--surface);
+  color: var(--text);
   border-radius: 16px;
   padding: 40px 36px;
   width: 100%;
@@ -135,7 +152,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  box-shadow: 0 20px 60px rgba(20, 20, 40, 0.25);
+  box-shadow: 0 20px 60px var(--shadow-color);
 }
 
 .login-logo {
@@ -148,14 +165,14 @@ body {
   margin: 0;
   font-size: 1.4rem;
   font-weight: 700;
-  color: #1a1f2b;
+  color: var(--text);
 }
 
 .login-divider {
   width: 48px;
   height: 4px;
   border-radius: 2px;
-  background: #3d5af1;
+  background: var(--accent);
   margin-bottom: 4px;
 }
 
@@ -163,7 +180,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #4a5268;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   cursor: pointer;
 }
@@ -175,9 +192,9 @@ body {
   justify-content: center;
   gap: 10px;
   padding: 12px 18px;
-  background: #ffffff;
-  color: #1a1f2b;
-  border: 1px solid #d7dbe6;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--input-border);
   border-radius: 8px;
   font-size: 1rem;
   font-weight: 500;
@@ -185,7 +202,7 @@ body {
 }
 
 .google-btn:hover:not(:disabled) {
-  background: #f5f7fb;
+  background: var(--hover-bg);
 }
 
 .page {
