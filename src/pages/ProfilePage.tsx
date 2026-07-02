@@ -16,12 +16,13 @@ export default function ProfilePage() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (!profile) return;
-    setFirstName(profile.firstName);
-    setLastName(profile.lastName);
-    setNickname(profile.nickname);
-    setFavoriteClub(profile.favoriteClub);
-  }, [profile]);
+    if (!user) return;
+    const [googleFirstName, ...googleRest] = (user.displayName ?? '').split(' ');
+    setFirstName(profile?.firstName || googleFirstName || '');
+    setLastName(profile?.lastName || googleRest.join(' '));
+    setNickname(profile?.nickname ?? '');
+    setFavoriteClub(profile?.favoriteClub ?? '');
+  }, [user, profile]);
 
   if (!user) return null;
 
