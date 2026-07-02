@@ -1,11 +1,19 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { onAuthStateChanged, signInWithPopup, signOut, type User } from 'firebase/auth';
+import {
+  browserLocalPersistence,
+  browserSessionPersistence,
+  onAuthStateChanged,
+  setPersistence,
+  signInWithPopup,
+  signOut,
+  type User,
+} from 'firebase/auth';
 import { auth, googleProvider } from '../firebase';
 
 interface AuthContextValue {
   user: User | null;
   loading: boolean;
-  signIn: () => Promise<void>;
+  signIn: (rememberMe: boolean) => Promise<void>;
   logOut: () => Promise<void>;
 }
 
@@ -22,7 +30,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const signIn = async () => {
+  const signIn = async (rememberMe: boolean) => {
+    await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
     await signInWithPopup(auth, googleProvider);
   };
 
