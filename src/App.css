@@ -711,3 +711,69 @@ button:disabled {
 .stats-loading {
   text-align: center;
 }
+
+.match-date-heading {
+  font-weight: 700;
+  padding: 16px 8px 8px;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+
+.match-row {
+  display: grid;
+  grid-template-columns: 36px 1fr 28px 72px 28px 1fr 90px 90px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.match-row-team {
+  font-size: 0.95rem;
+}
+
+.match-row-team-home {
+  text-align: right;
+}
+
+.match-row-team-away {
+  text-align: left;
+}
+
+.match-row-center {
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.match-row-bet {
+  text-align: center;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.match-row-action button {
+  width: 100%;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+}
+
+.logo-placeholder {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+}
+
+.tournament-placeholder {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  justify-self: center;
+}
+
+.team-placeholder {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  justify-self: center;
+}

@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { usePagination, useSortableTable } from '../lib/tableHooks';
 import type { Match } from '../types';
 import MatchCard from './MatchCard';
-import BetCell from './BetCell';
+import MatchRow from './MatchRow';
 
 interface Props {
   competitionId: string;
@@ -16,6 +16,9 @@ type SortKey = 'kickoff' | 'homeTeam' | 'awayTeam';
 
 const PAGE_SIZES = [10, 25, 50];
 
+const dateLabel = (kickoff: number) =>
+  new Date(kickoff).toLocaleDateString('uk-UA', { day: '2-digit', month: 'long' });
+
 export default function MatchesTable({ competitionId, matches, isAdmin, uid, displayName }: Props) {
   const [search, setSearch] = useState('');
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
@@ -27,7 +30,7 @@ export default function MatchesTable({ competitionId, matches, isAdmin, uid, dis
       : matches;
   }, [matches, search]);
 
-  const { sorted, toggleSort, indicator } = useSortableTable<Match, SortKey>(
+  const { sorted } = useSortableTable<Match, SortKey>(
     filtered,
     {
       kickoff: (a, b) => a.kickoff - b.kickoff,
@@ -39,6 +42,17 @@ export default function MatchesTable({ competitionId, matches, isAdmin, uid, dis
   );
 
   const { page, pageSize, totalPages, pageItems, setPage, setPageSize } = usePagination(sorted, 10);
+
+  const groups = useMemo(() => {
+    const map = new Map<string, Match[]>();
+    for (const m of pageItems) {
+      const key = dateLabel(m.kickoff);
+      const list = map.get(key);
+      if (list) list.push(m);
+      else map.set(key, [m]);
+    }
+    return [...map.entries()];
+  }, [pageItems]);
 
   return (
     <div>
@@ -67,45 +81,23 @@ export default function MatchesTable({ competitionId, matches, isAdmin, uid, dis
         </label>
       </div>
 
-      <table className="standings-table">
-        <thead>
-          <tr>
-            <th className="sortable" onClick={() => toggleSort('kickoff')}>
-              Дата{indicator('kickoff')}
-            </th>
-            <th className="sortable" onClick={() => toggleSort('homeTeam')}>
-              Господарі{indicator('homeTeam')}
-            </th>
-            <th className="sortable" onClick={() => toggleSort('awayTeam')}>
-              Гості{indicator('awayTeam')}
-            </th>
-            <th className="num-col">Ставка</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {pageItems.map((m) => (
-            <tr key={m.id}>
-              <td>{new Date(m.kickoff).toLocaleString('uk-UA')}</td>
-              <td>{m.homeTeam}</td>
-              <td>{m.awayTeam}</td>
-              <td className="num-col">
-                <BetCell competitionId={competitionId} matchId={m.id} uid={uid} />
-              </td>
-              <td>
-                <button onClick={() => setSelectedMatch(m)}>Деталі</button>
-              </td>
-            </tr>
-          ))}
-          {pageItems.length === 0 && (
-            <tr>
-              <td colSpan={5} className="muted">
-                Нічого не знайдено
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+      <div className="matches-list">
+        {groups.map(([label, dayMatches]) => (
+          <div key={label}>
+            <div className="match-date-heading">{label}</div>
+            {dayMatches.map((m) => (
+              <MatchRow
+                key={m.id}
+                competitionId={competitionId}
+                match={m}
+                uid={uid}
+                onOpenDetails={() => setSelectedMatch(m)}
+              />
+            ))}
+          </div>
+        ))}
+        {groups.length === 0 && <p className="muted">Нічого не знайдено</p>}
+      </div>
 
       {sorted.length > 0 && (
         <div className="table-footer">
